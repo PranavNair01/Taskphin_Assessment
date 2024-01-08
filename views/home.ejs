@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <title>Home</title>
+        <style>
+            body {
+                background-color: #343a40;
+                color: #dee2e6;
+                font-family: 'Arial', sans-serif;
+            }
+
+            .navbar {
+                background-color: #212529;
+            }
+
+            .navbar-brand,
+            .navbar-text {
+                color: #f8f9fa !important;
+            }
+
+            .container {
+                margin-top: 20px;
+            }
+
+            table {
+                width: 100%;
+                margin-top: 20px;
+                background-color: #212529;
+                color: #f8f9fa;
+            }
+
+            th,
+            td {
+                text-align: center;
+                padding: 8px;
+                color: #f8f9fa;
+                /* Set font color to white */
+            }
+
+            th {
+                background-color: #007bff;
+                color: #f8f9fa;
+            }
+
+            .edit-btn,
+            .delete-btn {
+                color: #007bff;
+                cursor: pointer;
+            }
+
+            .add-btn,
+            .logout-btn {
+                color: #f8f9fa;
+                cursor: pointer;
+            }
+
+            .add-btn {
+                margin-top: 20px;
+            }
+
+            .add-btn-container {
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="/">Movie App</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text mr-3">
+                            Welcome, <strong id="userEmail"></strong>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link logout-btn" onclick="logout()">Logout</span>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="add-btn-container">
+                <button type="button" class="btn btn-danger add-btn" onclick="addNewMovie()">Add New Movie</button>
+            </div>
+            <h2>Your Favorite Movies</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Movie Name</th>
+                        <th>Rating</th>
+                        <th>Cast</th>
+                        <th>Genre</th>
+                        <th>Release Date</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="movieTableBody">
+                    <!-- Movie entries will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <script>
+            // Dummy data for demonstration
+            const userData = {
+                email: 'user@example.com',
+                favoriteMovies: [
+                    { name: 'Inception', rating: 9.0, cast: ['Leonardo DiCaprio', 'Ellen Page'], genre: 'Sci-Fi', releaseDate: '2010-07-16' },
+                    { name: 'The Shawshank Redemption', rating: 9.3, cast: ['Tim Robbins', 'Morgan Freeman'], genre: 'Drama', releaseDate: '1994-09-23' },
+                    // Add more movie entries as needed
+                ]
+            };
+
+            // Populate user email in the navbar
+            document.getElementById('userEmail').innerText = userData.email;
+
+            // Populate movie table with user's favorite movies
+            const movieTableBody = document.getElementById('movieTableBody');
+            userData.favoriteMovies.forEach((movie, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${movie.name}</td>
+                <td>${movie.rating}</td>
+                <td>${movie.cast.join(', ')}</td>
+                <td>${movie.genre}</td>
+                <td>${movie.releaseDate}</td>
+                <td><span class="edit-btn" onclick="editMovie(${index})">Edit</span></td>
+                <td><span class="delete-btn" onclick="deleteMovie(${index})">Delete</span></td>
+            `;
+                movieTableBody.appendChild(row);
+            });
+
+            function logout() {
+                // Add logout logic here (redirect to login page, clear session, etc.)
+                alert('Logout clicked!');
+            }
+
+            function editMovie(index) {
+                // Add edit movie logic here
+                alert(`Edit movie: ${userData.favoriteMovies[index].name}`);
+            }
+
+            function deleteMovie(index) {
+                // Add delete movie logic here
+                alert(`Delete movie: ${userData.favoriteMovies[index].name}`);
+            }
+
+            function addNewMovie() {
+                // Add logic to add a new movie here
+                alert('Add New Movie clicked!');
+            }
+        </script>
+
+    </body>
+
+</html>
