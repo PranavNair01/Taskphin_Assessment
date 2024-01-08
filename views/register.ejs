@@ -70,7 +70,7 @@
                     <label for="confirmPassword">Confirm Password:</label>
                     <input type="password" class="form-control" id="confirmPassword" required>
                 </div>
-                <button type="button" class="btn btn-primary" onclick="submitRegisterForm()">Register</button>
+                <button type="submit" class="btn btn-primary">Register</button>
                 <p class="error-message" id="registerErrorMessage"></p>
             </form>
             <a href="/login" class="login-link">Already have an account? Login here</a>
@@ -81,10 +81,44 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
         <script>
-            function submitRegisterForm() {
-                // Simulating an error for demonstration purposes
-                document.getElementById('registerErrorMessage').innerText = 'Password and Confirm Password do not match';
-            }
+
+            const form = document.querySelector('form');
+            const errorMessage = document.getElementById('registerErrorMessage');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                errorMessage.innerText = '';
+
+                const email = form.registerEmail.value;
+                const password = form.registerPassword.value;
+                const confirmPassword = form.confirmPassword.value;
+
+                if (password == confirmPassword) {
+                    try {
+                        const res = await fetch('/register', {
+                            method: 'POST',
+                            body: JSON.stringify({ email, password }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                        });
+                        const data = await res.json();
+                        if (data.errors) {
+                            errorMessage.innerText = data.errors[0].message;
+                        }
+                        if (data.email) {
+                            location.assign('/');
+                        }
+                    }
+                    catch (err) {
+                        console.error(err);
+                    }
+                }
+                else {
+                    errorMessage.innerText = 'Password and Confirm Password do not match';
+                }
+            });
         </script>
 
     </body>

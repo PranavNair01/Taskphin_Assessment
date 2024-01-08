@@ -76,7 +76,7 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         <span class="navbar-text mr-3">
-                            Welcome, <strong id="userEmail"></strong>
+                            Welcome, <strong><%= user.email %></strong>
                         </span>
                     </li>
                     <li class="nav-item">
@@ -122,10 +122,7 @@
                     { name: 'The Shawshank Redemption', rating: 9.3, cast: ['Tim Robbins', 'Morgan Freeman'], genre: 'Drama', releaseDate: '1994-09-23' },
                     // Add more movie entries as needed
                 ]
-            };
-
-            // Populate user email in the navbar
-            document.getElementById('userEmail').innerText = userData.email;
+            }; 
 
             // Populate movie table with user's favorite movies
             const movieTableBody = document.getElementById('movieTableBody');
@@ -144,8 +141,7 @@
             });
 
             function logout() {
-                // Add logout logic here (redirect to login page, clear session, etc.)
-                alert('Logout clicked!');
+                location.assign('/logout');
             }
 
             function editMovie(index) {
