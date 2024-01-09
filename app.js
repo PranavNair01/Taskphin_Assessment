@@ -4,6 +4,7 @@ const { sq, testDbConnection } = require('./config/db');
 const { requireAuth } = require('./controllers/authMiddleware');
 const authController = require('./controllers/authController');
 const homeController = require('./controllers/homeController');
+const movieController = require('./controllers/movieController');
 
 // Server App Configuration
 const app = express();
@@ -32,3 +33,8 @@ app.get('/logout', authController.logout_get);
 
 // Homepage Route
 app.get('/', requireAuth, homeController.home_get);
+
+// Movie Operation Routes
+app.post('/movie', movieController.movie_post);
+app.put('/movie', movieController.movie_put);
+app.delete('/movie', movieController.movie_delete);

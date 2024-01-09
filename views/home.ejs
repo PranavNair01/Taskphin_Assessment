@@ -117,20 +117,20 @@
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
+                </thead>
+                <tbody id="movieTableBody">
+                    <!-- Movie entries are dynamically added here -->
                     <% movies.forEach((movie, index) => { %>
                         <tr>
                             <td><%= movie.name %></td>
                             <td><%= movie.rating %></td>
                             <td><%= movie.cast.join(', ') %></td>
                             <td><%= movie.genre %></td>
-                            <td><%= movie.releaseDate %></td>
+                            <td><%= movie.releaseDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></td>
                             <td><span class="edit-btn" onclick="openMovieModal('edit', <%= JSON.stringify(movie) %>)">Edit</span></td>
-                            <td><span class="delete-btn" onclick="deleteMovie(<%= index %>)">Delete</span></td>
+                            <td><span class="delete-btn" onclick="deleteMovie(<%= JSON.stringify(movie) %>)">Delete</span></td>
                         </tr>
                     <% }); %>
-                </thead>
-                <tbody id="movieTableBody">
-                    <!-- Movie entries will be dynamically added here -->
                 </tbody>
             </table>
         </div>
@@ -176,6 +176,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-danger" id="movieModalSubmitLabel"></button>
+                            <p class="error-message" id="errorMessage"></p>
                         </form>
                     </div>
                 </div>
@@ -190,8 +191,10 @@
         <script>
 
             const movieForm = document.querySelector('form');
+            let movieDbId = -1;
             const movieModalHeaderLabel = document.getElementById('movieModalLabel');
-            const movieModalSubmitLabel = document.getElementById('movieModalSubmitLabel')
+            const movieModalSubmitLabel = document.getElementById('movieModalSubmitLabel');
+            const errorMessage = document.getElementById('errorMessage');
 
             function logout() {
                 location.assign('/logout');
@@ -199,6 +202,9 @@
 
             movieForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+
+                errorMessage.innerText = '';
+
                 if (movieModalSubmitLabel.innerText == 'Add Movie') {
                     addMovie();
                 }
@@ -212,6 +218,7 @@
                 if (mode == 'add') {
                     movieModalHeaderLabel.innerText = 'Add New Movie';
                     movieModalSubmitLabel.innerText = 'Add Movie';
+                    movieDbId = -1;
                 }
                 if (mode == 'edit') {
                     movieModalHeaderLabel.innerText = 'Edit Your Movie Entry';
@@ -221,30 +228,94 @@
                     document.getElementById('cast').value = movie.cast;
                     document.getElementById('genre').value = movie.genre;
                     document.getElementById('releaseDate').value = movie.releaseDate;
+                    movieDbId = movie.id;
                 }
                 $('#movieModal').modal('show');
             }
 
             // Function to add a new movie
-            function addMovie() {
+            async function addMovie() {
                 // Collect data from the form
-                const movieName = $('#movieName').val();
+                const name = $('#movieName').val();
                 const rating = parseFloat($('#rating').val());
                 const cast = $('#cast').val().split(',').map(c => c.trim()); // Assuming cast is a comma-separated list
                 const genre = $('#genre').val();
                 const releaseDate = $('#releaseDate').val();
 
-                // Perform validation if needed
+                const movieEntry = { email: '<%= user.email %>', name, rating, cast, genre, releaseDate } 
 
-                console.log(movieName, rating, cast, genre, releaseDate);
+                try {
+                    const res = await fetch('/movie', {
+                        method: 'POST',
+                        body: JSON.stringify(movieEntry),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        } 
+                    });
+                    const data = await res.json();
+                    console.log(data);
+                    if (data.errors) {
+                        errorMessage.innerText = data.errors;
+                    }
+                    if (data.email) {
+                        location.assign('/');
+                    }
+                }
+                catch (err) {
+                    console.error(err);
+                }
             }
 
-            function editMovie() {
-                console.log('Editing entry of ', $('#movieName').val());
+            // Function to edit a movie entry
+            async function editMovie() {
+                // Collect data from the form
+                const name = $('#movieName').val();
+                const rating = parseFloat($('#rating').val());
+                const cast = $('#cast').val().split(',').map(c => c.trim()); // Assuming cast is a comma-separated list
+                const genre = $('#genre').val();
+                const releaseDate = $('#releaseDate').val();
+
+                const movieEntry = { id: movieDbId, name, rating, cast, genre, releaseDate } 
+
+                try {
+                    const res = await fetch('/movie', {
+                        method: 'PUT',
+                        body: JSON.stringify(movieEntry),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        } 
+                    });
+                    const data = await res.json();
+                    console.log(data);
+                    if (data.errors) {
+                        errorMessage.innerText = data.errors;
+                    }
+                    location.assign('/');
+                }
+                catch (err) {
+                    console.error(err);
+                }
             }
 
-            function deleteMovie(index) {
-                
+            async function deleteMovie(movie) {
+                try {
+                    const res = await fetch('/movie', {
+                        method: 'DELETE',
+                        body: JSON.stringify({ id: movie.id }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        } 
+                    });
+                    const data = await res.json();
+                    console.log(data);
+                    if (data.errors) {
+                        errorMessage.innerText = data.errors;
+                    }
+                    location.assign('/');
+                }
+                catch (err) {
+                    console.error(err);
+                }
             } 
         </script>
 
