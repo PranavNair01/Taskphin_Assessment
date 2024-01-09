@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const { sq, testDbConnection } = require('./config/db');
 const { requireAuth } = require('./controllers/authMiddleware');
 const authController = require('./controllers/authController');
+const homeController = require('./controllers/homeController');
 
 // Server App Configuration
 const app = express();
@@ -30,6 +31,4 @@ app.post('/login', authController.login_post);
 app.get('/logout', authController.logout_get);
 
 // Homepage Route
-app.get('/', requireAuth, (req, res) => {
-    res.render('home');
-});
+app.get('/', requireAuth, homeController.home_get);
